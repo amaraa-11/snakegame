@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>snake</title>
+  </head>
+  <style>
+    .board {
+      background-color: burlywood;
+      width: 600px;
+
+      height: 600px;
+      margin: 30px auto;
+      position: relative;
+    }
+    .snake {
+      background-color: purple;
+      border-radius: 10px;
+      position: absolute;
+      width: 20px;
+      height: 20px;
+    }
+  </style>
+  <body>
+    <div style="text-align: center"></div>
+    <div class="board" id="board">
+      <div class="snake"></div>
+    </div>
+    <div style="text-align: center">
+      <button onclick="changeDirection('up');">Up</button>
+      <button onclick="changeDirection('down');">Down</button>
+      <button onclick="changeDirection('left');">Left</button>
+      <button onclick="changeDirection('right');">Right</button>
+    </div>
+    <div style></div>
+
+    <script>
+      let headTop = 10;
+      let headLeft = 12;
+      let direction = "up";
+      const config = {
+        size: 20,
+        width: 30,
+        height: 20,
+      };
+
+      const boardEl = document.getElementById("board");
+      boardEl.style.width = config.width * config.size + "px";
+      boardEl.style.height = config.height * config.size + "px";
+
+      function goUp() {
+        headTop = headTop - 1;
+        if (headTop < 0) {
+          headTop = config.height - 1;
+        }
+        render();
+      }
+      function goDown() {
+        headTop = headTop + 1;
+        if (headTop === config.height) {
+          headTop = 0;
+        }
+        render();
+      }
+      function changeDirection(newDirection) {
+        if (direction === "up" || direction === "down") {
+          if (newDirection === "right" || newDirection === "left") {
+            direction = newDirection;
+          }
+        } else if (direction === "right" || direction === "left") {
+          if (newDirection === "up" || newDirection === "down") {
+            direction = newDirection;
+          }
+        }
+      }
+      function goRight() {
+        headLeft = headLeft + 1;
+        render();
+      }
+      function goLeft() {
+        headLeft = headLeft - 1;
+        render();
+      }
+
+      setInterval(gameloop, 300);
+      function gameloop() {
+        switch (direction) {
+          case "up":
+            goUp();
+            break;
+          case "right":
+            goRight();
+            break;
+          case "down":
+            goDown();
+            break;
+          case "left":
+            goLeft();
+            break;
+        }
+      }
+      function render() {
+        console.log(headLeft, headTop);
+        const snakeHtml = `
+      <div class="snake" style="width:${1 * config.size}px; height: ${
+          1 * config.size
+        }px; top: ${headTop * config.size}px; left: ${
+          headLeft * config.size
+        }px"></div>`;
+        boardEl.innerHTML = snakeHtml;
+      }
+      render();
+    </script>
+  </body>
+</html>
