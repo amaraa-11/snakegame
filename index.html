@@ -3,195 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>snake</title>
+    <title>Snake Game</title>
+    <link rel="stylesheet" href="style.css" />
   </head>
-  <style>
-    .board {
-      background-color: burlywood;
-      width: 600px;
 
-      height: 600px;
-      margin: 30px auto;
-      position: relative;
-    }
-    .snake {
-      background-color: purple;
-      border-radius: 10%;
-      position: absolute;
-      width: 20px;
-      height: 20px;
-    }
-  </style>
   <body>
-    <div style="text-align: center"></div>
-    <div class="board" id="board">
-      <div class="snake"></div>
+    <h1>Snake Game</h1>
+    <div class="game-info">
+      <span id="score">Score: 0</span>
     </div>
-    <div style="text-align: center">
-      <button onclick="startGame()"></button>
-      <button onclick="pauseGame()"></button>
-      <button onclick="restartGame()"></button>
+    <div id="background"></div>
+    <div>
+      <button onclick="start()">Start</button>
+      <button onclick="pause()">Pause</button>
+      <button onclick="restart()">Restart</button>
     </div>
-    <div style="text-align: center">
-      <button onclick="changeDirection('up');">Up</button>
-      <button onclick="changeDirection('down');">Down</button>
-      <button onclick="changeDirection('left');">Left</button>
-      <button onclick="changeDirection('right');">Right</button>
+    <div>
+      <button onclick="changedirection('up')">Up</button>
+      <button onclick="changedirection('down')">Down</button>
+      <button onclick="changedirection('left')">Left</button>
+      <button onclick="changedirection('right')">Right</button>
     </div>
-    <div style></div>
+    <div id="game-over">
+      Game Over! <button onclick="restart()">Play Again</button>
+    </div>
 
-    <script>
-      let headY = 5;
-      let headX = 4;
-      let score = 0;
-      let foodX;
-      let foodY;
-      let direction = "up";
-      let nextDirection = direction;
-      let tails = [
-        { x: 2, y: 5 },
-        { x: 3, y: 5 },
-        { x: 4, y: 5 },
-      ];
-      let intervalId = null;
-      const config = {
-        size: 20,
-        width: 30,
-        height: 20,
-      };
-
-      const boardEl = document.getElementById("board");
-      boardEl.style.width = config.width * config.size + "px";
-      boardEl.style.height = config.height * config.size + "px";
-
-      function goUp() {
-        headX = headX - 1;
-        if (headX < 0) {
-          headX = config.height - 1;
-        }
-      }
-      function goDown() {
-        headX = headX + 1;
-        if (headX === config.height) {
-          headX = 0;
-        }
-      }
-      function changeDirection(newDirection) {
-        if (direction === "up" || direction === "down") {
-          if (newDirection === "right" || newDirection === "left") {
-            nextDirection = newDirection;
-          }
-        } else if (direction === "right" || direction === "left") {
-          if (newDirection === "up" || newDirection === "down") {
-            nextDirection = newDirection;
-          }
-        }
-      }
-
-      function goRight() {
-        headX = headX + 1;
-      }
-      function goLeft() {
-        headY = headY - 1;
-      }
-      function startGame() {
-        generateFood();
-        if (!intervalId) {
-          intervalId = setInterval(gameloop, 300);
-        }
-      }
-      function generateFood() {
-        foodX = Math.floor(Math.random() * config.width);
-        foodY = Math.floor(Math.random() * config.height);
-      }
-      function reset() {
-        headY = 5;
-        headX = 5;
-        direction = "up";
-        tails = [
-          { x: 2, y: 5 },
-          { x: 3, y: 5 },
-          { x: 4, y: 5 },
-        ];
-        generateFood();
-      }
-      function restartGame() {
-        reset();
-        startGame;
-      }
-      function pauseGame() {
-        clearInterval(intervalId);
-        intervalId = null;
-      }
-
-      setInterval(gameloop, 300);
-      function gameloop() {
-        tails.push({ x: headX, y: headY });
-        tails.shift();
-        for (let i = 0; i < tails.length - 1; i++) {
-          if (headX === tails[i].x && headY === tails[i].y) {
-            alert("Game over!");
-            restartGame;
-          }
-        }
-        if (headX === foodX && headY === foodY) {
-          tails.push({ x: headX, y: headY });
-          generateFood();
-          score += 5;
-        }
-        switch (direction) {
-          case "up":
-            goUp();
-            break;
-          case "right":
-            goRight();
-            break;
-          case "down":
-            goDown();
-            break;
-          case "left":
-            goLeft();
-            break;
-        }
-        direction = nextDirection;
-      }
-      function listenKeys() {
-        const key = event.key;
-        switch (key) {
-          case "ArrowUp":
-            changeDirection("up");
-            break;
-          case "ArrowRight":
-            changeDirection("right");
-            break;
-          case "ArrowDown":
-            changeDirection("down");
-            break;
-          case "ArrowLeft":
-            changeDirection("left");
-            break;
-        }
-      }
-      document.addEventListener("keydown", listenKeys);
-      function render() {
-        let tailHtml = " ";
-        const foodHtml = `
-      <div class="food" style="width:${1 * config.size}px; height: ${
-          1 * config.size
-        }px; top: ${foodY * config.size}px; left: ${
-          foodX * config.size
-        }px"></div>`;
-        for (let i = 0; i < tails.length; i++) {
-          tailsHtml += ` <div class="snake" style="width:${
-            1 * config.size
-          }px; height: ${1 * config.size}px; top:${
-            tails[i].y * config.size
-          }px; left:${tails[i].x * config.size}px></div>`;
-        }
-        boardEl.innerHTML = `${foodHtml} ${tailHtml}`;
-      }
-      render();
-    </script>
+    <script src="index.js"></script>
   </body>
 </html>
